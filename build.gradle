@@ -11,6 +11,8 @@ buildscript {
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
 		classpath('gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.22.1')
+
+
 	}
 
 }
@@ -22,12 +24,12 @@ plugins {
 	id 'com.palantir.docker' version '0.22.1'
 }
 
-group = 'siecola'
+group = 'guikirsch'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '15'
 
 bootJar {
-	baseName = 'curso_aws_project01'
+	baseName = 'aws_project_01'
 	version =  '1.1.0'
 	mainClassName = "br.com.siecola.aws_project01.AwsProject01Application"
 }
