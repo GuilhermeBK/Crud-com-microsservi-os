@@ -1,7 +1,9 @@
 package br.com.siecola.aws_project01.controller;
 
+import br.com.siecola.aws_project01.enums.EventType;
 import br.com.siecola.aws_project01.model.Product;
 import br.com.siecola.aws_project01.repository.ProductRepository;
+import br.com.siecola.aws_project01.service.ProductPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +16,16 @@ import java.util.Optional;
 @RequestMapping("/api/products")
 public class ProductController {
 
-    @Autowired
+
     private ProductRepository productRepository;
+
+    private ProductPublisher productPublisher;
+
+    @Autowired
+    public ProductController(ProductRepository productRepository, ProductPublisher productPublisher){
+            this.productRepository = productRepository;
+            this.productPublisher = productPublisher;
+    }
 
     @GetMapping
     public List<Product> findAll(){
@@ -35,6 +45,8 @@ public class ProductController {
     public ResponseEntity<Product> saveProduct(@RequestBody Product product){
         Product productCreate = productRepository.save(product);
 
+        productPublisher.publishProductEvent(productCreate, EventType.PRODUCT_CREATED, "Gui");
+
         return new ResponseEntity<Product>(productCreate, HttpStatus.CREATED);
     }
 
@@ -44,6 +56,8 @@ public class ProductController {
             product.setId(id);
 
             Product productUpdate = productRepository.save(product);
+
+            productPublisher.publishProductEvent(productUpdate, EventType.PRODUCT_UPDATE, "Paulo");
 
             return ResponseEntity.ok(productUpdate);
         }
@@ -56,6 +70,8 @@ public class ProductController {
         if (optionalProduct.isPresent()){
             Product product = optionalProduct.get();
             productRepository.delete(product);
+
+            productPublisher.publishProductEvent(product, EventType.PRODUCT_DELETED, "Rodrigo");
 
             return ResponseEntity.ok(product);
         } else {
